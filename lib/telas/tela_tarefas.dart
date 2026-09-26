@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 import '../banco/banco_dados.dart';
+import '../componentes/campo_nova_tarefa.dart';
+import '../componentes/item_tarefa.dart';
+import '../componentes/logo_unitins.dart';
 import '../modelos/tarefa.dart';
 
+/// Tela principal. Guarda a lista e conversa com o banco.
 class TelaTarefas extends StatefulWidget {
   const TelaTarefas({super.key});
 
@@ -65,41 +69,20 @@ class _TelaTarefasState extends State<TelaTarefas> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.systemGroupedBackground,
       navigationBar: const CupertinoNavigationBar(
-        middle: Text('Minhas Tarefas'),
+        middle: Text(
+          'Minhas Tarefas',
+          style: TextStyle(color: CupertinoColors.white),
+        ),
       ),
       child: SafeArea(
         child: Column(
           children: [
-            _montarFormulario(),
+            const LogoUnitins(),
+            CampoNovaTarefa(controlador: _campoDescricao, aoSalvar: _salvar),
             Expanded(child: _montarLista()),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _montarFormulario() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: CupertinoTextField(
-              controller: _campoDescricao,
-              placeholder: 'Nova tarefa',
-              padding: const EdgeInsets.all(12),
-              onSubmitted: (_) => _salvar(),
-            ),
-          ),
-          const SizedBox(width: 8),
-          CupertinoButton.filled(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            onPressed: _salvar,
-            child: const Icon(CupertinoIcons.add),
-          ),
-        ],
       ),
     );
   }
@@ -123,42 +106,17 @@ class _TelaTarefasState extends State<TelaTarefas> {
           footer: const Text(
             'Toque para concluir. Arraste para a esquerda para excluir.',
           ),
-          children: _tarefas.map(_montarItem).toList(),
+          children: [
+            for (final tarefa in _tarefas)
+              ItemTarefa(
+                key: ValueKey(tarefa.id),
+                tarefa: tarefa,
+                aoTocar: () => _alternarSituacao(tarefa),
+                aoExcluir: () => _excluir(tarefa),
+              ),
+          ],
         ),
       ],
-    );
-  }
-
-  Widget _montarItem(Tarefa tarefa) {
-    // Dismissible permite arrastar o item para o lado para apagar.
-    return Dismissible(
-      key: ValueKey(tarefa.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) => _excluir(tarefa),
-      background: Container(
-        color: CupertinoColors.destructiveRed,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(CupertinoIcons.trash, color: CupertinoColors.white),
-      ),
-      child: CupertinoListTile(
-        onTap: () => _alternarSituacao(tarefa),
-        leading: Icon(
-          tarefa.concluida
-              ? CupertinoIcons.checkmark_circle_fill
-              : CupertinoIcons.circle,
-          color: tarefa.concluida
-              ? CupertinoColors.activeGreen
-              : CupertinoColors.systemGrey,
-        ),
-        title: Text(
-          tarefa.descricao,
-          style: TextStyle(
-            color: tarefa.concluida ? CupertinoColors.systemGrey : null,
-            decoration: tarefa.concluida ? TextDecoration.lineThrough : null,
-          ),
-        ),
-      ),
     );
   }
 }

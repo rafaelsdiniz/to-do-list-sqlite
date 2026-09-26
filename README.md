@@ -6,7 +6,7 @@ Aplicação de exemplo do seminário de **Persistência Local com SQLite** (Disp
 
 É uma lista de tarefas feita em Flutter que grava os dados em um banco **SQLite** no próprio aparelho, usando o pacote `sqflite`. Você pode cadastrar tarefas, marcar como concluída ou pendente e excluir. **Os dados continuam salvos depois de fechar o app.**
 
-O visual segue o estilo do iPhone, usando os widgets **Cupertino** do Flutter.
+O visual segue o estilo do iPhone, usando os widgets **Cupertino** do Flutter, com o logo e as cores da **Unitins**.
 
 ---
 
@@ -120,16 +120,34 @@ O código que importa para o seminário fica todo dentro de `lib/`. As pastas `a
 
 ```
 lib/
-├── main.dart                  # ponto de partida do app
+├── main.dart                    # ponto de partida: prepara o banco e abre o app
+├── app_tarefas.dart             # nome do app, tema (cores) e primeira tela
 ├── modelos/
-│   └── tarefa.dart            # classe Tarefa (o que é uma tarefa)
+│   └── tarefa.dart              # classe Tarefa (o que é uma tarefa)
 ├── banco/
-│   └── banco_dados.dart       # cria o banco e faz todo o SQL
-└── telas/
-    └── tela_tarefas.dart      # a tela: campo, botão e lista
+│   └── banco_dados.dart         # cria o banco e faz todo o SQL
+├── telas/
+│   └── tela_tarefas.dart        # a tela: guarda a lista e conversa com o banco
+├── componentes/
+│   ├── logo_unitins.dart        # logo no topo da tela
+│   ├── campo_nova_tarefa.dart   # campo de texto + botão de adicionar
+│   └── item_tarefa.dart         # uma linha da lista
+└── tema/
+    └── cores_unitins.dart       # azul e amarelo da Unitins
+assets/
+└── imagens/
+    └── logo_unitins.png         # logo usado na tela
 test/
-└── tarefa_test.dart           # testes da classe Tarefa
+└── tarefa_test.dart             # testes da classe Tarefa
 ```
+
+| Pasta | O que guarda |
+|---|---|
+| `modelos/` | Os dados do app, sem nada de tela ou de banco |
+| `banco/` | Tudo que fala com o SQLite |
+| `telas/` | As telas completas, que juntam os componentes |
+| `componentes/` | Pedaços de tela reaproveitáveis, sem acesso ao banco |
+| `tema/` | Cores do app |
 
 A ideia é separar em **três camadas**, cada uma com uma responsabilidade:
 
@@ -218,33 +236,89 @@ usuário faz algo ──▶ chama o BancoDados ──▶ _carregar() lê o banco
 | `_alternarSituacao()` | Troca entre concluída e pendente | `atualizar()` |
 | `_excluir()` | Apaga a tarefa arrastada | `excluir()` |
 
+A tela é montada com três componentes, um embaixo do outro:
+
+```dart
+Column(
+  children: [
+    const LogoUnitins(),
+    CampoNovaTarefa(controlador: _campoDescricao, aoSalvar: _salvar),
+    Expanded(child: _montarLista()),   // cada linha é um ItemTarefa
+  ],
+)
+```
+
+### 4.5 Os componentes: `lib/componentes/`
+
+Os componentes são `StatelessWidget`: só desenham o que recebem. Quem decide o que acontece é a tela, que passa funções como `aoSalvar`, `aoTocar` e `aoExcluir`.
+
+| Componente | O que mostra | O que recebe |
+|---|---|---|
+| `LogoUnitins` | O logo da Unitins | Nada |
+| `CampoNovaTarefa` | Campo "Nova tarefa" e botão **+** amarelo | O controlador do texto e a função `aoSalvar` |
+| `ItemTarefa` | Uma tarefa com o círculo de concluída | A `tarefa` e as funções `aoTocar` e `aoExcluir` |
+
 Widgets Cupertino usados para o visual de iPhone:
 
 | Widget | Onde aparece |
 |---|---|
-| `CupertinoApp` | O app inteiro, em `main.dart` |
-| `CupertinoPageScaffold` e `CupertinoNavigationBar` | A estrutura da tela e a barra do título |
+| `CupertinoApp` e `CupertinoThemeData` | O app inteiro e as cores, em `app_tarefas.dart` |
+| `CupertinoPageScaffold` e `CupertinoNavigationBar` | A estrutura da tela e a barra azul do título |
 | `CupertinoTextField` | O campo "Nova tarefa" |
-| `CupertinoButton.filled` | O botão **+** |
+| `CupertinoButton` | O botão **+** |
 | `CupertinoListSection.insetGrouped` | A lista com cantos arredondados, igual aos Ajustes do iPhone |
 | `CupertinoListTile` | Cada tarefa |
 | `Dismissible` | Arrastar para o lado para excluir |
 
-### 4.5 O ponto de partida: `lib/main.dart`
+### 4.6 Cores e logo da Unitins
 
-No Android, iOS e macOS o `sqflite` funciona sozinho. No **Windows** e no **Linux** ele precisa do pacote `sqflite_common_ffi`, que usa o SQLite do computador. É só isso que o `if` faz:
+As cores ficam em `lib/tema/cores_unitins.dart` e foram tiradas do próprio logo:
+
+| Cor | Código | Onde é usada |
+|---|---|---|
+| 🔵 Azul | `#18428F` | Barra do título e tarefas concluídas |
+| 🟡 Amarelo | `#FDB813` | Botão de adicionar |
+
+O tema do app, em `app_tarefas.dart`, aplica o azul em todas as barras:
+
+```dart
+theme: CupertinoThemeData(
+  brightness: Brightness.light,
+  primaryColor: CoresUnitins.azul,
+  barBackgroundColor: CoresUnitins.azul,
+  scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
+),
+```
+
+O logo fica em `assets/imagens/logo_unitins.png`. Para o Flutter encontrar a imagem, a pasta precisa estar registrada no `pubspec.yaml`:
+
+```yaml
+flutter:
+  assets:
+    - assets/imagens/
+```
+
+Depois é só usar `Image.asset('assets/imagens/logo_unitins.png')`.
+
+### 4.7 O ponto de partida: `lib/main.dart`
+
+No Android, iOS e macOS o `sqflite` funciona sozinho. No **Windows** e no **Linux** ele precisa do pacote `sqflite_common_ffi`, que usa o SQLite do computador. É só isso que a função `prepararBancoNoComputador()` faz:
 
 ```dart
 void main() {
+  prepararBancoNoComputador();
+  runApp(const AppTarefas());
+}
+
+void prepararBancoNoComputador() {
   if (Platform.isWindows || Platform.isLinux) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
-  runApp(const AppTarefas());
 }
 ```
 
-### 4.6 Pacotes usados
+### 4.8 Pacotes usados
 
 | Pacote | Para que serve |
 |---|---|
@@ -252,7 +326,7 @@ void main() {
 | [`sqflite_common_ffi`](https://pub.dev/packages/sqflite_common_ffi) | SQLite no Windows e no Linux |
 | [`path`](https://pub.dev/packages/path) | Monta o caminho do arquivo `.db` com o `join()` |
 
-### 4.7 Onde fica o arquivo do banco?
+### 4.9 Onde fica o arquivo do banco?
 
 | Plataforma | Local |
 |---|---|
@@ -295,10 +369,16 @@ Nenhum dispositivo compatível foi encontrado. No Windows, instale o Visual Stud
 O navegador não é suportado. Rode com `flutter run -d windows`, `-d macos` ou `-d linux`.
 
 **`databaseFactory not initialized`**
-O `if` do `main.dart` foi apagado ou alterado. Ele precisa rodar antes do `runApp`.
+A função `prepararBancoNoComputador()` do `main.dart` foi apagada ou alterada. Ela precisa rodar antes do `runApp`.
 
 **Quero começar com o banco vazio**
 No computador, apague a pasta `.dart_tool/sqflite_common_ffi`. No celular, desinstale o app.
+
+**O logo não aparece**
+Confira se a pasta `assets/imagens/` está no `pubspec.yaml`. Depois de mexer no `pubspec.yaml`, rode `flutter pub get` e reinicie o app com `q` e `flutter run`. O hot reload não carrega imagens novas.
+
+**`Build process failed` no Windows**
+Quase sempre é porque o app ainda está aberto de uma execução anterior. Feche a janela do app e rode de novo.
 
 **`flutter` não é reconhecido como comando**
 O Flutter não está no PATH. Siga de novo a parte de "Update your path" no guia de instalação.
