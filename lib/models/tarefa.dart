@@ -9,16 +9,15 @@ class Tarefa {
   /// Objeto Dart -> Map (formato que o sqflite grava no banco).
   /// O SQLite nao tem BOOLEAN, entao true/false vira 1/0.
   Map<String, dynamic> toMap() {
-    return {'id': id, 'descricao': descricao, 'concluida': concluida ? 1 : 0};
+    // TODO(Passo 1): devolver um Map com as chaves 'id', 'descricao' e
+    // 'concluida' (true vira 1, false vira 0).
+    throw UnimplementedError('Passo 1: escrever o toMap()');
   }
 
   /// Map (linha lida do banco) -> objeto Dart.
   factory Tarefa.fromMap(Map<String, dynamic> map) {
-    return Tarefa(
-      id: map['id'] as int?,
-      descricao: map['descricao'] as String,
-      concluida: map['concluida'] == 1,
-    );
+    // TODO(Passo 1): criar a Tarefa lendo o Map (1 vira true, 0 vira false).
+    throw UnimplementedError('Passo 1: escrever o fromMap()');
   }
 
   /// Cria uma copia alterando so o que for informado.

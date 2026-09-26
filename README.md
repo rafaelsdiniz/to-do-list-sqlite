@@ -8,6 +8,21 @@ Lista de tarefas em Flutter que grava os dados em um banco **SQLite** no própri
 
 ---
 
+## 🧑‍🏫 Branch `base`: prática da aula
+
+Esta branch tem a parte visual pronta e **quatro trechos de SQLite faltando**. Cada um está marcado no código com `TODO(Passo N)`. Complete na ordem:
+
+| Passo | Arquivo | O que escrever |
+|---|---|---|
+| 1 | `lib/models/tarefa.dart` | `toMap()` e `fromMap()` |
+| 2 | `lib/database/db_helper.dart` | O `CREATE TABLE` em `_criarTabelas()` |
+| 3 | `lib/database/db_helper.dart` | `inserir()`, `listar()`, `atualizar()` e `excluir()` |
+| 4 | `lib/telas/tela_tarefas.dart` | Guardar o `Future` no `initState` e montar o `FutureBuilder` |
+
+Depois do Passo 1, `flutter test` passa. Depois do Passo 4, aperte **R** (hot restart) e o app fica igual ao da branch `main`.
+
+---
+
 ## 🔧 O que instalar
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) 3.32 ou mais novo (Dart 3.8+), [Git](https://git-scm.com/downloads) e [VS Code](https://code.visualstudio.com) com a extensão **Flutter**.
@@ -29,7 +44,7 @@ Para conferir a instalação, rode `flutter doctor`.
 ## 🚀 Como rodar
 
 ```bash
-git clone https://github.com/rafaelsdiniz/to-do-list-sqlite.git
+git clone -b base https://github.com/rafaelsdiniz/to-do-list-sqlite.git
 cd to-do-list-sqlite
 flutter pub get
 flutter run

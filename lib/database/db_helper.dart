@@ -32,44 +32,35 @@ class DBHelper {
   }
 
   Future<void> _criarTabelas(Database banco, int versao) async {
-    await banco.execute('''
-      CREATE TABLE $tabela (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        descricao TEXT NOT NULL,
-        concluida INTEGER NOT NULL DEFAULT 0
-      )
-    ''');
+    // TODO(Passo 2): criar a tabela com banco.execute(...) e um CREATE TABLE.
+    // Colunas: id (chave, gerada pelo banco), descricao (texto) e
+    // concluida (inteiro, 0 ou 1).
+    throw UnimplementedError('Passo 2: escrever o CREATE TABLE');
   }
 
   // CREATE
   Future<int> inserir(Tarefa tarefa) async {
-    final banco = await database;
-    final dados = tarefa.toMap()..remove('id'); // o banco gera o id
-    return banco.insert(tabela, dados);
+    // TODO(Passo 3): gravar com banco.insert(...). Tirar o id do Map,
+    // porque quem gera o id e o banco.
+    throw UnimplementedError('Passo 3: escrever o inserir()');
   }
 
   // READ
   Future<List<Tarefa>> listar() async {
-    final banco = await database;
-    // Pendentes primeiro, mais novas no topo.
-    final linhas = await banco.query(tabela, orderBy: 'concluida ASC, id DESC');
-    return linhas.map(Tarefa.fromMap).toList();
+    // TODO(Passo 3): ler com banco.query(...), pendentes primeiro, e
+    // converter cada linha com Tarefa.fromMap.
+    throw UnimplementedError('Passo 3: escrever o listar()');
   }
 
   // UPDATE
   Future<int> atualizar(Tarefa tarefa) async {
-    final banco = await database;
-    return banco.update(
-      tabela,
-      tarefa.toMap(),
-      where: 'id = ?',
-      whereArgs: [tarefa.id], // sempre usar ? e whereArgs, nunca concatenar
-    );
+    // TODO(Passo 3): atualizar com banco.update(...) usando where e whereArgs.
+    throw UnimplementedError('Passo 3: escrever o atualizar()');
   }
 
   // DELETE
   Future<int> excluir(int id) async {
-    final banco = await database;
-    return banco.delete(tabela, where: 'id = ?', whereArgs: [id]);
+    // TODO(Passo 3): apagar com banco.delete(...) usando where e whereArgs.
+    throw UnimplementedError('Passo 3: escrever o excluir()');
   }
 }

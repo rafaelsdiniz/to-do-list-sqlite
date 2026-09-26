@@ -19,12 +19,14 @@ class _TelaTarefasState extends State<TelaTarefas> {
   final _campoDescricao = TextEditingController();
 
   // Future guardado no State: o FutureBuilder nao refaz a consulta a cada build.
+  // ignore: unused_field (sera usado no Passo 4)
   late Future<List<Tarefa>> _tarefasFuture;
 
   @override
   void initState() {
     super.initState();
-    _tarefasFuture = DBHelper.instance.listar();
+    // TODO(Passo 4): buscar as tarefas no banco e guardar em _tarefasFuture.
+    // Depois deste passo, use hot restart (R), nao hot reload (r).
   }
 
   @override
@@ -102,38 +104,18 @@ class _TelaTarefasState extends State<TelaTarefas> {
   }
 
   Widget _montarLista() {
-    return FutureBuilder<List<Tarefa>>(
-      future: _tarefasFuture,
-      builder: (context, snapshot) {
-        // 1. Carregando: so na primeira leitura. Nas proximas o FutureBuilder
-        //    mantem a lista anterior na tela enquanto espera, sem piscar.
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            !snapshot.hasData) {
-          return const Center(child: CupertinoActivityIndicator());
-        }
-
-        // 2. Erro
-        if (snapshot.hasError) {
-          return Center(child: Text('Erro ao carregar: ${snapshot.error}'));
-        }
-
-        // 3. Lista vazia
-        final tarefas = snapshot.data ?? [];
-        if (tarefas.isEmpty) {
-          return const Center(
-            child: Text(
-              'Nenhuma tarefa cadastrada',
-              style: TextStyle(color: CupertinoColors.systemGrey),
-            ),
-          );
-        }
-
-        // 4. Dados
-        return _montarDados(tarefas);
-      },
+    // TODO(Passo 4): trocar este texto por um FutureBuilder que usa o
+    // _tarefasFuture e trata: carregando, erro, lista vazia e dados.
+    // Para os dados, chamar _montarDados(tarefas).
+    return const Center(
+      child: Text(
+        'A lista aparece aqui no Passo 4',
+        style: TextStyle(color: CupertinoColors.systemGrey),
+      ),
     );
   }
 
+  // ignore: unused_element (sera usado no Passo 4)
   Widget _montarDados(List<Tarefa> tarefas) {
     final pendentes = tarefas.where((t) => !t.concluida).length;
     const estiloLegenda = TextStyle(
