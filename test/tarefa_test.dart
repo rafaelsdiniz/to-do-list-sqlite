@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:todo_sqlite/modelos/tarefa.dart';
+import 'package:todo_sqlite/models/tarefa.dart';
 
 void main() {
-  group('Tarefa.paraMapa', () {
+  group('Tarefa.toMap', () {
     test('converte concluida true em 1', () {
       const tarefa = Tarefa(
         id: 1,
@@ -10,7 +10,7 @@ void main() {
         concluida: true,
       );
 
-      expect(tarefa.paraMapa(), {
+      expect(tarefa.toMap(), {
         'id': 1,
         'descricao': 'Estudar SQLite',
         'concluida': 1,
@@ -20,19 +20,19 @@ void main() {
     test('converte concluida false em 0', () {
       const tarefa = Tarefa(id: 2, descricao: 'Montar slides');
 
-      expect(tarefa.paraMapa()['concluida'], 0);
+      expect(tarefa.toMap()['concluida'], 0);
     });
 
     test('mantem id null quando a tarefa ainda nao foi salva', () {
       const tarefa = Tarefa(descricao: 'Nova tarefa');
 
-      expect(tarefa.paraMapa()['id'], isNull);
+      expect(tarefa.toMap()['id'], isNull);
     });
   });
 
-  group('Tarefa.doMapa', () {
+  group('Tarefa.fromMap', () {
     test('converte concluida 1 em true', () {
-      final tarefa = Tarefa.doMapa({
+      final tarefa = Tarefa.fromMap({
         'id': 3,
         'descricao': 'Apresentar seminario',
         'concluida': 1,
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('converte concluida 0 em false', () {
-      final tarefa = Tarefa.doMapa({
+      final tarefa = Tarefa.fromMap({
         'id': 4,
         'descricao': 'Revisar codigo',
         'concluida': 0,
@@ -53,9 +53,9 @@ void main() {
       expect(tarefa.concluida, isFalse);
     });
 
-    test('doMapa(paraMapa()) preserva os dados', () {
+    test('fromMap(toMap()) preserva os dados', () {
       const original = Tarefa(id: 5, descricao: 'Ida e volta', concluida: true);
-      final copia = Tarefa.doMapa(original.paraMapa());
+      final copia = Tarefa.fromMap(original.toMap());
 
       expect(copia.id, original.id);
       expect(copia.descricao, original.descricao);
@@ -63,11 +63,11 @@ void main() {
     });
   });
 
-  group('Tarefa.copiarCom', () {
+  group('Tarefa.copyWith', () {
     const original = Tarefa(id: 6, descricao: 'Original', concluida: false);
 
     test('altera somente concluida', () {
-      final copia = original.copiarCom(concluida: true);
+      final copia = original.copyWith(concluida: true);
 
       expect(copia.id, 6);
       expect(copia.descricao, 'Original');
@@ -75,7 +75,7 @@ void main() {
     });
 
     test('altera id e descricao mantendo concluida', () {
-      final copia = original.copiarCom(id: 7, descricao: 'Alterada');
+      final copia = original.copyWith(id: 7, descricao: 'Alterada');
 
       expect(copia.id, 7);
       expect(copia.descricao, 'Alterada');
@@ -83,7 +83,7 @@ void main() {
     });
 
     test('sem argumentos gera copia identica e nao altera o original', () {
-      final copia = original.copiarCom();
+      final copia = original.copyWith();
 
       expect(copia.id, original.id);
       expect(copia.descricao, original.descricao);

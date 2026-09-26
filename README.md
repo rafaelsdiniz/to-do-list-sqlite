@@ -10,7 +10,7 @@ Lista de tarefas em Flutter que grava os dados em um banco **SQLite** no própri
 
 ## 🔧 O que instalar
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install), [Git](https://git-scm.com/downloads) e [VS Code](https://code.visualstudio.com) com a extensão **Flutter**.
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) 3.32 ou mais novo (Dart 3.8+), [Git](https://git-scm.com/downloads) e [VS Code](https://code.visualstudio.com) com a extensão **Flutter**.
 - Mais uma ferramenta, de acordo com onde você vai rodar:
 
 | Onde rodar | O que instalar |
@@ -47,19 +47,19 @@ Se aparecer mais de um dispositivo, digite o número dele. Com o app aberto, `r`
 lib/
 ├── main.dart                    # prepara o banco e abre o app
 ├── app_tarefas.dart             # nome, tema e primeira tela
-├── modelos/tarefa.dart          # classe Tarefa
-├── banco/banco_dados.dart       # todo o SQL fica aqui
+├── models/tarefa.dart           # classe Tarefa
+├── database/db_helper.dart      # DBHelper: todo o SQL fica aqui
 ├── telas/tela_tarefas.dart      # a tela: lista + CRUD
-├── componentes/                 # logo, campo de texto e item da lista
+├── componentes/                 # logo, campo de texto, item da lista e aviso
 └── tema/cores_unitins.dart      # azul #18428F e amarelo #FDB813
 assets/imagens/logo_unitins.png
 test/tarefa_test.dart            # testes da classe Tarefa
 ```
 
-A tela **nunca** escreve SQL. Ela só chama o `BancoDados`:
+A tela **nunca** escreve SQL. Ela só chama o `DBHelper`:
 
 ```
-TelaTarefas  ──▶  BancoDados  ──SQL──▶  tarefas.db
+TelaTarefas  ──▶  DBHelper  ──SQL──▶  tarefas.db
 ```
 
 ---
@@ -78,13 +78,13 @@ TelaTarefas  ──▶  BancoDados  ──SQL──▶  tarefas.db
 
 **Modelo (`Tarefa`)**
 
-- `paraMapa()` converte o objeto para gravar no banco.
-- `Tarefa.doMapa()` converte a linha lida do banco em objeto.
-- `copiarCom()` cria uma cópia mudando só um campo.
+- `toMap()` converte o objeto para gravar no banco.
+- `Tarefa.fromMap()` converte a linha lida do banco em objeto.
+- `copyWith()` cria uma cópia mudando só um campo.
 
-**Banco (`BancoDados`)**
+**Banco (`DBHelper`)**
 
-É um *singleton*: uma instância só, acessada por `BancoDados.instancia`. Na primeira vez, ele cria o arquivo `tarefas.db` e roda o `CREATE TABLE`.
+É um *singleton*: uma instância só, acessada por `DBHelper.instance`. Na primeira vez que o getter `database` é usado, ele cria o arquivo `tarefas.db` e roda o `CREATE TABLE`.
 
 | CRUD | Método | SQL |
 |---|---|---|
@@ -97,11 +97,17 @@ TelaTarefas  ──▶  BancoDados  ──SQL──▶  tarefas.db
 
 **Tela (`TelaTarefas`)**
 
+A lista usa um **`FutureBuilder`** integrado a um **`ListView.builder`**. O `Future` fica guardado no State (`_tarefasFuture`), para o banco não ser consultado a cada `build`. O `FutureBuilder` trata quatro situações: carregando, erro, lista vazia e dados.
+
 Toda ação segue o mesmo ciclo:
 
 ```
-toque do usuário ──▶ BancoDados ──▶ _carregar() ──▶ setState() redesenha a tela
+toque ──▶ DBHelper ──▶ aviso na tela ──▶ _recarregar() troca o Future no setState ──▶ FutureBuilder lê o banco de novo
 ```
+
+Depois de cada `await`, a tela confere `if (!mounted) return;` antes de usar o `context` ou chamar `setState`. Cadastrar, concluir, voltar para pendente e excluir mostram um aviso que some em 2 segundos. Tentar salvar com o campo vazio também mostra um aviso.
+
+> 💡 Ao arrastar um item, o `Dismissible` exige que ele saia da lista na hora. Por isso a tela tira o item da lista primeiro e só depois apaga do banco.
 
 **Windows e Linux**
 

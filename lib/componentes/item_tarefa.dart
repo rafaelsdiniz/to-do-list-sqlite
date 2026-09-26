@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../modelos/tarefa.dart';
+import '../models/tarefa.dart';
 import '../tema/cores_unitins.dart';
 
 /// Uma linha da lista.
@@ -30,21 +30,30 @@ class ItemTarefa extends StatelessWidget {
         padding: const EdgeInsets.only(right: 20),
         child: const Icon(CupertinoIcons.trash, color: CupertinoColors.white),
       ),
-      child: CupertinoListTile(
-        onTap: aoTocar,
-        leading: Icon(
-          tarefa.concluida
-              ? CupertinoIcons.checkmark_circle_fill
-              : CupertinoIcons.circle,
-          color: tarefa.concluida
-              ? CoresUnitins.azul
-              : CupertinoColors.systemGrey,
+      // Fundo branco com linha fina embaixo, como nas listas do iPhone.
+      child: Container(
+        decoration: const BoxDecoration(
+          color: CupertinoColors.white,
+          border: Border(
+            bottom: BorderSide(color: Color(0xFFE5E5EA), width: 0.5),
+          ),
         ),
-        title: Text(
-          tarefa.descricao,
-          style: TextStyle(
-            color: tarefa.concluida ? CupertinoColors.systemGrey : null,
-            decoration: tarefa.concluida ? TextDecoration.lineThrough : null,
+        child: CupertinoListTile(
+          onTap: aoTocar,
+          leading: Icon(
+            tarefa.concluida
+                ? CupertinoIcons.checkmark_circle_fill
+                : CupertinoIcons.circle,
+            color: tarefa.concluida
+                ? CoresUnitins.azul
+                : CupertinoColors.systemGrey,
+          ),
+          title: Text(
+            tarefa.descricao,
+            style: TextStyle(
+              color: tarefa.concluida ? CupertinoColors.systemGrey : null,
+              decoration: tarefa.concluida ? TextDecoration.lineThrough : null,
+            ),
           ),
         ),
       ),

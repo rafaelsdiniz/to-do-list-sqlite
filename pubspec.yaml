@@ -5,15 +5,15 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.13.3
+  sdk: ^3.8.0
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8      # icones no estilo iPhone
-  sqflite: ^2.4.4              # SQLite no Android, iOS e macOS
-  sqflite_common_ffi: ^2.4.3   # SQLite no Windows e no Linux
-  path: ^1.9.1                 # monta o caminho do arquivo .db
+  sqflite: ^2.4.2              # SQLite no Android, iOS e macOS
+  sqflite_common_ffi: ^2.3.0   # SQLite no Windows e no Linux
+  path: ^1.9.0                 # monta o caminho do arquivo .db
 
 dev_dependencies:
   flutter_test:

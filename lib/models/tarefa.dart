@@ -8,21 +8,21 @@ class Tarefa {
 
   /// Objeto Dart -> Map (formato que o sqflite grava no banco).
   /// O SQLite nao tem BOOLEAN, entao true/false vira 1/0.
-  Map<String, dynamic> paraMapa() {
+  Map<String, dynamic> toMap() {
     return {'id': id, 'descricao': descricao, 'concluida': concluida ? 1 : 0};
   }
 
   /// Map (linha lida do banco) -> objeto Dart.
-  factory Tarefa.doMapa(Map<String, dynamic> mapa) {
+  factory Tarefa.fromMap(Map<String, dynamic> map) {
     return Tarefa(
-      id: mapa['id'] as int?,
-      descricao: mapa['descricao'] as String,
-      concluida: mapa['concluida'] == 1,
+      id: map['id'] as int?,
+      descricao: map['descricao'] as String,
+      concluida: map['concluida'] == 1,
     );
   }
 
   /// Cria uma copia alterando so o que for informado.
-  Tarefa copiarCom({int? id, String? descricao, bool? concluida}) {
+  Tarefa copyWith({int? id, String? descricao, bool? concluida}) {
     return Tarefa(
       id: id ?? this.id,
       descricao: descricao ?? this.descricao,
