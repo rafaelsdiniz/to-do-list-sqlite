@@ -7,7 +7,7 @@ import '../componentes/logo_unitins.dart';
 import '../database/db_helper.dart';
 import '../models/tarefa.dart';
 
-/// Tela principal: formulario em cima e lista de tarefas embaixo.
+/// A única tela do app: o campo para digitar em cima e a lista de tarefas embaixo.
 class TelaTarefas extends StatefulWidget {
   const TelaTarefas({super.key});
 
@@ -18,13 +18,14 @@ class TelaTarefas extends StatefulWidget {
 class _TelaTarefasState extends State<TelaTarefas> {
   final _campoDescricao = TextEditingController();
 
-  // Future guardado no State: o FutureBuilder nao refaz a consulta a cada build.
+  // A busca no banco fica guardada aqui. Se chamássemos listar() direto no
+  // build, o app ia no banco de novo toda vez que a tela fosse redesenhada.
   late Future<List<Tarefa>> _tarefasFuture;
 
   @override
   void initState() {
     super.initState();
-    _tarefasFuture = DBHelper.instance.listar();
+    _tarefasFuture = DBHelper.instance.listar(); // primeira leitura, quando a tela abre
   }
 
   @override
@@ -33,14 +34,15 @@ class _TelaTarefasState extends State<TelaTarefas> {
     super.dispose();
   }
 
-  /// Troca o Future dentro do setState, o que faz o FutureBuilder reler o banco.
+  /// Chamado depois de toda mudança no banco. Trocar o Future dentro do
+  /// setState faz o FutureBuilder buscar a lista de novo.
   void _recarregar() {
     setState(() {
       _tarefasFuture = DBHelper.instance.listar();
     });
   }
 
-  /// CREATE
+  /// Botão +: grava a tarefa que foi digitada.
   Future<void> _salvar() async {
     final descricao = _campoDescricao.text.trim();
     if (descricao.isEmpty) {
@@ -50,13 +52,15 @@ class _TelaTarefasState extends State<TelaTarefas> {
 
     await DBHelper.instance.inserir(Tarefa(descricao: descricao));
 
-    if (!mounted) return; // a tela pode ter fechado durante o await
+    // Enquanto o banco gravava, a tela pode ter sido fechada.
+    // Se foi, paramos aqui para não mexer numa tela que não existe mais.
+    if (!mounted) return;
     _campoDescricao.clear();
     mostrarAviso(context, 'Tarefa cadastrada!');
     _recarregar();
   }
 
-  /// UPDATE: marca como concluida ou pendente.
+  /// Toque na tarefa: se estava pendente vira concluída, e o contrário também.
   Future<void> _alternarSituacao(Tarefa tarefa) async {
     final atualizada = tarefa.copyWith(concluida: !tarefa.concluida);
     await DBHelper.instance.atualizar(atualizada);
@@ -71,7 +75,7 @@ class _TelaTarefasState extends State<TelaTarefas> {
     _recarregar();
   }
 
-  /// DELETE
+  /// Arrastou para o lado: apaga a tarefa do banco.
   Future<void> _excluir(Tarefa tarefa) async {
     await DBHelper.instance.excluir(tarefa.id!);
 
@@ -105,19 +109,20 @@ class _TelaTarefasState extends State<TelaTarefas> {
     return FutureBuilder<List<Tarefa>>(
       future: _tarefasFuture,
       builder: (context, snapshot) {
-        // 1. Carregando: so na primeira leitura. Nas proximas o FutureBuilder
-        //    mantem a lista anterior na tela enquanto espera, sem piscar.
+        // Ainda esperando o banco responder pela primeira vez: mostra a rodinha.
+        // Nas outras vezes a lista antiga continua na tela enquanto carrega,
+        // então nada fica piscando.
         if (snapshot.connectionState == ConnectionState.waiting &&
             !snapshot.hasData) {
           return const Center(child: CupertinoActivityIndicator());
         }
 
-        // 2. Erro
+        // Deu algum erro ao ler o banco.
         if (snapshot.hasError) {
           return Center(child: Text('Erro ao carregar: ${snapshot.error}'));
         }
 
-        // 3. Lista vazia
+        // O banco respondeu, mas ainda não tem nenhuma tarefa.
         final tarefas = snapshot.data ?? [];
         if (tarefas.isEmpty) {
           return const Center(
@@ -128,7 +133,7 @@ class _TelaTarefasState extends State<TelaTarefas> {
           );
         }
 
-        // 4. Dados
+        // Tem tarefas: monta a lista.
         return _montarDados(tarefas);
       },
     );
@@ -151,7 +156,7 @@ class _TelaTarefasState extends State<TelaTarefas> {
             style: estiloLegenda,
           ),
         ),
-        // Cartao branco com cantos arredondados, como nos Ajustes do iPhone.
+        // Cartão branco de cantos arredondados, igual à tela de Ajustes do iPhone.
         Flexible(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -170,9 +175,9 @@ class _TelaTarefasState extends State<TelaTarefas> {
                   tarefa: tarefa,
                   aoTocar: () => _alternarSituacao(tarefa),
                   aoExcluir: () {
-                    // O Dismissible exige que o item saia da tela logo apos
-                    // ser arrastado. Tiramos da lista na hora e depois
-                    // apagamos do banco.
+                    // Quando o item é arrastado, o Flutter exige que ele suma
+                    // da lista na mesma hora. Por isso tiramos ele da lista
+                    // primeiro e só depois apagamos do banco.
                     setState(() {
                       tarefas.remove(tarefa);
                     });

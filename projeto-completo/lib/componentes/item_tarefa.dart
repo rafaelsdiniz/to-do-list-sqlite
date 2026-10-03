@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import '../models/tarefa.dart';
 import '../tema/cores_unitins.dart';
 
-/// Uma linha da lista.
-/// Tocar marca como concluida. Arrastar para a esquerda exclui.
+/// Uma tarefa na lista.
+/// Tocar marca como concluída. Arrastar para a esquerda apaga.
 class ItemTarefa extends StatelessWidget {
   final Tarefa tarefa;
   final VoidCallback aoTocar;
@@ -19,7 +19,8 @@ class ItemTarefa extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dismissible permite arrastar o item para o lado para apagar.
+    // O Dismissible é o que deixa arrastar o item para o lado.
+    // Enquanto arrasta, aparece o fundo vermelho com a lixeira.
     return Dismissible(
       key: ValueKey(tarefa.id),
       direction: DismissDirection.endToStart,
@@ -30,7 +31,7 @@ class ItemTarefa extends StatelessWidget {
         padding: const EdgeInsets.only(right: 20),
         child: const Icon(CupertinoIcons.trash, color: CupertinoColors.white),
       ),
-      // Fundo branco com linha fina embaixo, como nas listas do iPhone.
+      // Fundo branco com uma linha fininha embaixo, igual às listas do iPhone.
       child: Container(
         decoration: const BoxDecoration(
           color: CupertinoColors.white,

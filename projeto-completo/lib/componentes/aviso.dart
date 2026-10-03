@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 
 import '../tema/cores_unitins.dart';
 
-// Aviso que esta na tela agora. So mostramos um por vez.
+// Guarda o aviso que está aparecendo agora, para um não ficar em cima do outro.
 OverlayEntry? _avisoAtual;
 
-/// Mostra um aviso curto no topo da tela, que some sozinho em 2 segundos.
-/// O Overlay e uma camada por cima da tela, onde o aviso e desenhado.
+/// Mostra uma mensagem no topo da tela (tipo "Tarefa cadastrada!")
+/// que some sozinha depois de 2 segundos.
+/// Ela é desenhada no Overlay, uma camada que fica por cima da tela.
 void mostrarAviso(BuildContext context, String mensagem) {
   _fecharAviso();
 
@@ -33,7 +34,7 @@ class _Aviso extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: MediaQuery.paddingOf(context).top + 56, // logo abaixo da barra
+      top: MediaQuery.paddingOf(context).top + 56, // logo abaixo da barra azul
       left: 24,
       right: 24,
       child: IgnorePointer(

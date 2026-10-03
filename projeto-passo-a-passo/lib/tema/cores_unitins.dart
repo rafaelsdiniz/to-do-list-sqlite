@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-/// Cores tiradas do logo da Unitins.
-/// Para mudar a cor do app inteiro, basta mudar aqui.
+/// As duas cores do logo da Unitins.
+/// O app inteiro usa estas cores, então mudando aqui muda tudo.
 class CoresUnitins {
   static const azul = Color(0xFF18428F);
   static const amarelo = Color(0xFFFDB813);

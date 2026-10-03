@@ -12,9 +12,14 @@ void main() {
   runApp(const AppTarefas());
 }
 
-/// No Android, iOS e macOS o sqflite ja funciona sozinho.
-/// No navegador precisa do factory ffi web; no Windows e no Linux, do sqflite_common_ffi.
-/// kIsWeb e' checado primeiro pra nunca tocar em Platform (dart:io) rodando no navegador.
+/// O sqflite foi feito pensando em celular. No Android, no iPhone e no Mac
+/// ele já funciona sem a gente configurar nada.
+///
+/// No Windows, no Linux e no navegador ele precisa de uma ajuda: trocamos o
+/// databaseFactory (quem abre o banco) por uma versão que sabe rodar ali.
+///
+/// O kIsWeb vem primeiro de propósito. No navegador não existe Platform, então
+/// perguntar "Platform.isWindows" lá faria o app quebrar.
 void prepararBancoNoComputador() {
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb;

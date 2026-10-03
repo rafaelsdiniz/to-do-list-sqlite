@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 
 import '../tema/cores_unitins.dart';
 
-/// Campo de texto com o botao de adicionar ao lado.
+/// O campo onde se digita a tarefa, com o botão + do lado.
+/// Apertar Enter no teclado também salva.
 class CampoNovaTarefa extends StatelessWidget {
   final TextEditingController controlador;
   final VoidCallback aoSalvar;

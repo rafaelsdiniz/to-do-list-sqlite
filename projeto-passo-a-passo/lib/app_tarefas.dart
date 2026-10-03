@@ -3,13 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'tema/cores_unitins.dart';
 import 'telas/tela_tarefas.dart';
 
-/// Configuracao geral do app: nome, tema e primeira tela.
+/// A "casca" do app: o nome, as cores e qual tela abre primeiro.
 class AppTarefas extends StatelessWidget {
   const AppTarefas({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // CupertinoApp usa o visual do iPhone em todas as plataformas.
+    // Com o CupertinoApp o app fica com cara de iPhone,
+    // mesmo rodando no Windows ou no Android.
     return const CupertinoApp(
       title: 'Minhas Tarefas',
       debugShowCheckedModeBanner: false,
