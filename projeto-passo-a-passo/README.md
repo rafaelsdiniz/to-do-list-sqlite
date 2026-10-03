@@ -1,8 +1,6 @@
-# 📝 To Do List com SQLite: versão para a aula
+# ✏️ Projeto passo a passo
 
-Cópia do projeto do seminário de **Persistência Local com SQLite** (Dispositivos Móveis I, Unitins, Grupo 5), **com 4 passos faltando** para a turma completar junto com a gente. O projeto completo, que serve de gabarito, fica na [raiz do repositório](../).
-
-**Integrantes:** Rafael, Guilherme, Pedro Lucas e João Vitor de Araújo
+O mesmo app do [projeto completo](../projeto-completo/), **com 4 passos faltando** para a turma completar junto com a gente. O que precisa instalar está no [README principal](../README.md).
 
 O app abre e roda mesmo sem os passos. Enquanto um passo estiver faltando, aparece na tela uma mensagem como **"Falta o PASSO 1"**. Cada passo está marcado no código com `TODO PASSO` e tem um comentário explicando o que escrever.
 
@@ -19,10 +17,9 @@ O `UPDATE` e o `DELETE` já estão prontos e servem de exemplo.
 
 ## 🚀 Como rodar
 
-Depois de clonar o repositório, entre na pasta `aula`:
+Dentro desta pasta (`projeto-passo-a-passo`):
 
 ```bash
-cd to-do-list-sqlite/aula
 flutter pub get
 flutter run -d windows
 ```
@@ -139,8 +136,10 @@ Se vocês ensaiarem com todos os passos prontos, o banco vai ficar criado e com 
 - **Windows/Linux:** feche o app e apague a pasta `.dart_tool/sqflite_common_ffi`.
 - **Celular:** desinstale o app.
 
-Para voltar o código para a versão com os passos faltando, rode na raiz do repositório:
+Para voltar o código para a versão com os passos faltando, rode dentro desta pasta:
 
 ```bash
-git checkout -- aula/lib
+git checkout -- lib
 ```
+
+Se travar em algum passo, o código pronto está no [projeto completo](../projeto-completo/lib/).
