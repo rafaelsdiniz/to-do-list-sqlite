@@ -6,6 +6,13 @@ Aplicação de exemplo do seminário de **Persistência Local com SQLite** (Disp
 
 Lista de tarefas em Flutter que grava os dados em um banco **SQLite** no próprio aparelho. Dá para cadastrar, concluir e excluir tarefas, e **tudo continua salvo depois de fechar o app**. O visual segue o estilo do iPhone (widgets Cupertino) com o logo e as cores da Unitins.
 
+Este repositório tem **dois projetos**:
+
+| Pasta | O que é |
+|---|---|
+| raiz (esta pasta) | ✅ Projeto **completo**, funcionando. Serve de gabarito. |
+| [`aula/`](aula/) | ✏️ O mesmo projeto **com 4 passos faltando**, para a turma completar durante a apresentação. O passo a passo está em [`aula/README.md`](aula/README.md). |
+
 ---
 
 ## 🔧 O que instalar
@@ -35,6 +42,8 @@ flutter pub get
 flutter run
 ```
 
+Para rodar a versão incompleta da aula, entre na pasta dela antes: `cd aula`, depois `flutter pub get` e `flutter run`.
+
 Se aparecer mais de um dispositivo, digite o número dele. Com o app aberto, `r` aplica mudanças no código e `q` fecha.
 
 **Usando o app:** digite a tarefa e aperte **+**. Toque na tarefa para concluir. Arraste para a esquerda para excluir.
@@ -54,6 +63,7 @@ lib/
 └── tema/cores_unitins.dart      # azul #18428F e amarelo #FDB813
 assets/imagens/logo_unitins.png
 test/tarefa_test.dart            # testes da classe Tarefa
+aula/                            # o mesmo projeto com 4 passos faltando
 ```
 
 A tela **nunca** escreve SQL. Ela só chama o `DBHelper`:
